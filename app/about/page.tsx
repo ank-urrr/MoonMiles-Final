@@ -22,7 +22,7 @@ const team = [
   {
     name: "Rudraksh Gupta",
     role: "Head of Operations",
-    image: "/professional-asian-man-portrait-friendly.jpg",
+    image: "/Rudraksh.jpeg",
   },
   {
     name: "Aditya Pandey",
