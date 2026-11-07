@@ -82,7 +82,7 @@ export default function ItineraryPlannerPage() {
   }
 
   return (
-    <main className="min-h-screen relative">
+    <main id="main-content" className="min-h-screen relative">
       <FloatingDots />
       <Navbar />
 

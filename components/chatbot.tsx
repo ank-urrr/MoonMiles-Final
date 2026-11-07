@@ -84,6 +84,9 @@ export function Chatbot() {
     <>
       {/* Chat Button */}
       <motion.button
+        aria-label={isOpen ? "Close travel assistant" : "Open travel assistant"}
+        aria-expanded={isOpen}
+        aria-controls="travel-assistant"
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg shadow-primary/25 hover:scale-105 transition-transform"
         whileHover={{ scale: 1.1 }}
@@ -116,11 +119,14 @@ export function Chatbot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="travel-assistant"
+            role="dialog"
+            aria-label="MoonMiles travel assistant"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-24 right-6 z-50 w-[350px] h-[500px] glass-strong rounded-3xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[min(350px,calc(100vw-32px))] h-[min(500px,calc(100dvh-130px))] glass-strong rounded-3xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="p-4 border-b border-border flex items-center gap-3">
@@ -129,7 +135,7 @@ export function Chatbot() {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">MoonMiles Assistant</h3>
-                <p className="text-xs text-muted-foreground">{isLoading ? "Typing..." : "Online • Ready to help"}</p>
+                <p className="text-xs text-muted-foreground">{isLoading ? "Thinking..." : "Your AI travel companion"}</p>
               </div>
             </div>
 
@@ -171,14 +177,16 @@ export function Chatbot() {
             <form onSubmit={handleSubmit} className="p-4 border-t border-border">
               <div className="flex items-center gap-2">
                 <input
+                  aria-label="Message the travel assistant"
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type your message..."
-                  className="flex-1 bg-secondary/50 rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="flex-1 min-w-0 bg-secondary/50 rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   disabled={isLoading}
                 />
                 <button
+                  aria-label="Send message"
                   type="submit"
                   disabled={isLoading || !input.trim()}
                   className="w-11 h-11 bg-primary text-primary-foreground rounded-xl flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-50"

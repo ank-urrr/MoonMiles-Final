@@ -75,7 +75,7 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
+      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Redirecting to login…</p>
       </main>
     )
@@ -96,7 +96,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main id="main-content" className="min-h-screen bg-background">
       <Navbar />
 
       <div className="pt-28 pb-16 px-4">

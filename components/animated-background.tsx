@@ -1,126 +1,67 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { useReducedMotion } from "framer-motion"
 
-interface Particle {
-  x: number
-  y: number
-  size: number
-  speedX: number
-  speedY: number
-  opacity: number
-}
+interface Particle { x: number; y: number; size: number; speedX: number; speedY: number }
 
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
-
+    if (!canvas || reducedMotion) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    resizeCanvas()
-    window.addEventListener("resize", resizeCanvas)
-
-    // Create particles with sunset gradient colors
-    const particles: Particle[] = []
-    const colors = [
-      "rgba(255, 138, 92, 0.4)", // Coral Orange
-      "rgba(255, 95, 109, 0.35)", // Salmon
-      "rgba(212, 80, 121, 0.3)", // Rose Pink
-      "rgba(255, 180, 150, 0.25)", // Light Peach
-    ]
-
-    for (let i = 0; i < 50; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 4 + 1,
-        speedX: (Math.random() - 0.5) * 0.3,
-        speedY: (Math.random() - 0.5) * 0.3,
-        opacity: Math.random() * 0.5 + 0.2,
-      })
-    }
-
-    const animate = () => {
+    let frame: number | null = null
+    let previous: number | null = null
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    resize()
+    const particles: Particle[] = Array.from({ length: 24 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 3 + 1, speedX: (Math.random() - 0.5) * 18, speedY: (Math.random() - 0.5) * 18 }))
+    const animate = (timestamp: number) => {
+      // Pixels per second, independent of the display refresh rate. Clamp resume gaps.
+      const delta = previous === null ? 0 : Math.min((timestamp - previous) / 1000, 0.05)
+      previous = timestamp
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((particle, index) => {
-        // Update position
-        particle.x += particle.speedX
-        particle.y += particle.speedY
-
-        // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width
-        if (particle.x > canvas.width) particle.x = 0
-        if (particle.y < 0) particle.y = canvas.height
-        if (particle.y > canvas.height) particle.y = 0
-
-        // Draw particle with gradient color
+      for (const particle of particles) {
+        particle.x = (particle.x + particle.speedX * delta + canvas.width) % canvas.width
+        particle.y = (particle.y + particle.speedY * delta + canvas.height) % canvas.height
         ctx.beginPath()
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        ctx.fillStyle = colors[index % colors.length]
+        ctx.fillStyle = "rgba(112, 133, 99, 0.13)"
         ctx.fill()
-      })
-
-      requestAnimationFrame(animate)
+      }
+      frame = requestAnimationFrame(animate)
     }
-
-    animate()
-
+    const visibility = () => {
+      if (frame !== null) cancelAnimationFrame(frame)
+      frame = null
+      previous = null
+      if (!document.hidden) frame = requestAnimationFrame(animate)
+    }
+    visibility()
+    window.addEventListener("resize", resize, { passive: true })
+    document.addEventListener("visibilitychange", visibility)
     return () => {
-      window.removeEventListener("resize", resizeCanvas)
+      if (frame !== null) cancelAnimationFrame(frame)
+      window.removeEventListener("resize", resize)
+      document.removeEventListener("visibilitychange", visibility)
     }
-  }, [])
-
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" style={{ opacity: 0.6 }} />
+  }, [reducedMotion])
+  return <canvas ref={canvasRef} aria-hidden="true" className="fixed inset-0 pointer-events-none z-0" />
 }
 
-// Floating dots component for simpler animated background
-export function FloatingDots() {
-  const dots = Array.from({ length: 30 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 6 + 2,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 20 + 15,
-    delay: Math.random() * 5,
-  }))
+// Deterministic positions avoid server/client hydration mismatches and rerender jumps.
+const dots = Array.from({ length: 12 }, (_, i) => ({ id: i, size: 2 + (i % 4), x: (i * 37 + 7) % 100, y: (i * 23 + 11) % 100, duration: 20 + (i % 5) * 4 }))
 
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {dots.map((dot) => (
-        <motion.div
-          key={dot.id}
-          className="absolute rounded-full"
-          style={{
-            width: dot.size,
-            height: dot.size,
-            left: `${dot.x}%`,
-            top: `${dot.y}%`,
-            background: `linear-gradient(135deg, rgba(255, 138, 92, 0.5), rgba(212, 80, 121, 0.4))`,
-          }}
-          animate={{
-            x: [0, 30, -20, 10, 0],
-            y: [0, -40, 20, -30, 0],
-            opacity: [0.3, 0.6, 0.4, 0.7, 0.3],
-            scale: [1, 1.2, 0.9, 1.1, 1],
-          }}
-          transition={{
-            duration: dot.duration,
-            delay: dot.delay,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  )
+export function FloatingDots() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const update = () => { if (ref.current) ref.current.dataset.paused = String(document.hidden) }
+    update()
+    document.addEventListener("visibilitychange", update)
+    return () => document.removeEventListener("visibilitychange", update)
+  }, [])
+  return <div ref={ref} aria-hidden="true" className="mm-floating-dots fixed inset-0 pointer-events-none z-0 overflow-hidden">{dots.map((dot) => <span key={dot.id} className="mm-floating-dot" style={{ width: dot.size, height: dot.size, left: `${dot.x}%`, top: `${dot.y}%`, animationDuration: `${dot.duration}s`, animationDelay: `${-dot.id}s` }} />)}</div>
 }

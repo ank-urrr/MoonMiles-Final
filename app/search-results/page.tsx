@@ -120,7 +120,7 @@ function SearchResultsContent() {
       <FloatingDots />
       <Navbar />
 
-      <main className="relative z-10 pt-24 pb-16 px-4">
+      <main id="main-content" className="relative z-10 pt-24 pb-16 px-4">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Search Results Header Card */}
           <motion.div

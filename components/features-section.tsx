@@ -1,73 +1,21 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { MapPin, BadgeCheck, Users, Headphones } from "lucide-react"
+import Link from "next/link"
+import { motion, useReducedMotion } from "framer-motion"
+import { ArrowUpRight, Compass, Route, Sparkles } from "lucide-react"
 
-const features = [
-  {
-    icon: MapPin,
-    title: "Curated Destinations",
-    description: "Hand-picked locations by travel experts for unforgettable experiences.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Best Price Guarantee",
-    description: "We match any price you find, ensuring you get the best deal every time.",
-  },
-  {
-    icon: Users,
-    title: "Trusted Travel Partners",
-    description: "Partnered with top-rated airlines, hotels, and local guides worldwide.",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    description: "Round-the-clock assistance wherever you are in the world.",
-  },
+const steps = [
+  { number: "01", icon: Compass, title: "Follow your curiosity", text: "Island time or city lights? Explore destination guides and find a place that feels like you." },
+  { number: "02", icon: Sparkles, title: "Make it your own", text: "Give our AI planner your dates, budget, and travel style. Build a day-by-day plan around what you love." },
+  { number: "03", icon: Route, title: "Go a little further", text: "Compare travel and stay ideas, explore your itinerary, and book with your preferred travel provider." },
 ]
 
 export function FeaturesSection() {
+  const reducedMotion = useReducedMotion()
   return (
-    <section className="py-24 px-4 relative z-10">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 tracking-tight">
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-primary via-[#FF5F6D] to-accent bg-clip-text text-transparent">
-              MoonMiles
-            </span>
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-            Experience premium travel planning with features designed for your peace of mind.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="glass rounded-2xl p-6 group cursor-pointer"
-            >
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
-                <feature.icon className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+    <section className="mm-section mm-how" aria-labelledby="how-title">
+      <div className="mm-section-heading"><div><p className="mm-eyebrow">LESS PLANNING. MORE LIVING.</p><h2 id="how-title">A good trip begins<br />with a <em>little spark.</em></h2></div><Link href="/itinerary-planner" className="mm-text-link">Meet your trip planner <ArrowUpRight size={18} /></Link></div>
+      <div className="mm-steps">{steps.map(({ number, icon: Icon, title, text }, index) => <motion.div key={number} className="mm-step" initial={reducedMotion ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ delay: index * 0.1 }}><div className="mm-step-top"><span>{number}</span><Icon size={25} strokeWidth={1.4} /></div><h3>{title}</h3><p>{text}</p></motion.div>)}</div>
     </section>
   )
 }

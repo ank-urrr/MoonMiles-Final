@@ -1,18 +1,18 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Inter, Geist_Mono } from "next/font/google"
+import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { AuthProvider } from "@/components/auth-provider"
+import { MotionProvider } from "@/components/motion-provider"
 import "./globals.css"
+import "./moonmiles.css"
 
-const inter = Inter({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" })
 
 export const metadata: Metadata = {
-  title: "MoonMiles - Explore the World",
+  title: "MoonMiles — Find your somewhere",
   description:
     "Curated journeys, seamless planning, unforgettable experiences. Your premium travel agency for destinations worldwide.",
-  generator: "v0.app",
   icons: {
     icon: [
       {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#FF8A5C",
+  themeColor: "#f7f6f0",
 }
 
 export default function RootLayout({
@@ -43,9 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <AuthProvider>
-          {children}
+          <MotionProvider>{children}</MotionProvider>
           <Analytics />
         </AuthProvider>
       </body>

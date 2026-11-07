@@ -252,7 +252,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
 
   if (!destination) {
     return (
-      <main className="min-h-screen bg-background">
+      <main id="main-content" className="min-h-screen bg-background">
         <Navbar />
         <div className="pt-32 pb-24 px-4 text-center">
           <h1 className="text-3xl font-bold text-foreground mb-4">Destination not found</h1>
@@ -266,7 +266,7 @@ export default function DestinationDetailPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main id="main-content" className="min-h-screen bg-background">
       <Navbar />
 
       {/* Hero Section */}
