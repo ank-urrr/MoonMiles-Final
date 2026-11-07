@@ -41,6 +41,9 @@ export function HeroSection() {
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] })
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"])
   const textY = useTransform(scrollYProgress, [0, 1], [0, 100])
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
+  const textOpacity = useTransform(scrollYProgress, [0, 0.35, 0.75], [1, 1, 0])
+  const pickerY = useTransform(scrollYProgress, [0, 1], [0, -85])
   const running = playing && visible && pageVisible && !interacting && !reducedMotion
 
   useEffect(() => {
@@ -60,6 +63,10 @@ export function HeroSection() {
 
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    // Read the actual form values too, so browser autofill/native date entry is respected.
+    const formData = new FormData(event.currentTarget)
+    const checkIn = String(formData.get("checkIn") || "")
+    const checkOut = String(formData.get("checkOut") || "")
     if (checkIn && checkIn < localDate(new Date())) {
       setError("Choose a departure date from today onwards.")
       return
@@ -78,7 +85,7 @@ export function HeroSection() {
   return (
     <section ref={hero} className="mm-hero" aria-label="Discover your next escape">
       <div className="mm-hero-visual">
-        <motion.div className="mm-hero-images" style={{ y: reducedMotion ? 0 : imageY }}>
+        <motion.div className="mm-hero-images" style={{ y: reducedMotion ? 0 : imageY, scale: reducedMotion ? 1 : imageScale }}>
           {scenes.map((scene, index) => (
             <div key={scene.name} className={`mm-hero-scene ${index === active ? "is-active" : ""}`}>
               <img src={scene.image} alt="" fetchPriority={index === 0 ? "high" : "low"} decoding="async" className="mm-hero-photo" style={{ animationPlayState: running ? "running" : "paused" }} />
@@ -86,7 +93,7 @@ export function HeroSection() {
           ))}
         </motion.div>
         <div className="mm-hero-shade" />
-        <motion.div className="mm-hero-copy" style={{ y: reducedMotion ? 0 : textY }}>
+        <motion.div className="mm-hero-copy" style={{ y: reducedMotion ? 0 : textY, opacity: reducedMotion ? 1 : textOpacity }}>
           <p className="mm-eyebrow mm-hero-enter"><span className="mm-tiny-sun" /> THE WORLD IS CLOSER THAN YOU THINK</p>
           <h1 className="mm-hero-enter">Find your<br /><em>somewhere.</em></h1>
           <div className="mm-hero-intro mm-hero-enter">
@@ -94,14 +101,14 @@ export function HeroSection() {
             <Link href="/destinations" className="mm-hero-explore">Explore the world <ArrowUpRight size={18} /></Link>
           </div>
         </motion.div>
-        <div className="mm-scene-picker" aria-label="Choose a destination scene" onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)} onFocusCapture={() => setInteracting(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setInteracting(false) }}>
+        <motion.div className="mm-scene-picker" style={{ y: reducedMotion ? 0 : pickerY }} aria-label="Choose a destination scene" onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)} onFocusCapture={() => setInteracting(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setInteracting(false) }}>
           <span className="mm-scene-label">A CHANGE OF SCENERY</span>
           {scenes.map((scene, index) => (
             <button key={scene.name} type="button" className={`mm-scene-button ${index === active ? "is-active" : ""}`} aria-label={`Show ${scene.name}`} aria-pressed={index === active} onClick={() => { setActive(index); setPlaying(false) }}>
               <img src={scene.image} alt="" width={68} height={68} /><span>{scene.name}</span>
             </button>
           ))}
-        </div>
+        </motion.div>
         <div className="mm-hero-bottom">
           <div className="mm-scene-location" aria-live={playing ? "off" : "polite"}><MapPin size={16} /><div><strong>{scenes[active].name}, {scenes[active].country}</strong><span>{scenes[active].caption}</span></div></div>
           <div className="mm-scene-progress"><span>0{active + 1}</span><div className="mm-progress-track"><span key={`${active}-${running}`} className={running ? "is-running" : ""} /></div><span>03</span><button type="button" aria-label={playing ? "Pause destination slideshow" : "Play destination slideshow"} onClick={() => setPlaying(!playing)}>{playing ? <Pause size={14} /> : <Play size={14} />}</button></div>
@@ -110,8 +117,8 @@ export function HeroSection() {
       <div className="mm-search-wrap">
         <form className="mm-search" onSubmit={search} aria-label="Find your trip">
           <label className="mm-search-field mm-search-destination"><MapPin size={19} /><span><span className="mm-field-label">Where to?</span><span className="mm-select-wrap"><select aria-label="Destination" value={destination} onChange={(event) => setDestination(event.target.value)}>{destinations.map((place) => <option key={place}>{place}</option>)}</select><ChevronDown size={13} /></span></span></label>
-          <label className="mm-search-field"><CalendarDays size={18} /><span><span className="mm-field-label">Check in</span><input aria-label="Check in" type="date" min={today} value={checkIn} required={Boolean(checkOut)} onChange={(event) => { setCheckIn(event.target.value); if (checkOut && event.target.value >= checkOut) setCheckOut(""); setError("") }} /></span></label>
-          <label className="mm-search-field"><CalendarDays size={18} /><span><span className="mm-field-label">Check out</span><input aria-label="Check out" type="date" min={checkIn ? dayAfter(checkIn) : today} value={checkOut} required={Boolean(checkIn)} onChange={(event) => { setCheckOut(event.target.value); setError("") }} /></span></label>
+          <label className="mm-search-field"><CalendarDays size={18} /><span><span className="mm-field-label">Check in</span><input aria-label="Check in" name="checkIn" type="date" min={today} value={checkIn} required={Boolean(checkOut)} onInput={(event) => { setCheckIn(event.currentTarget.value); if (checkOut && event.currentTarget.value >= checkOut) setCheckOut(""); setError("") }} /></span></label>
+          <label className="mm-search-field"><CalendarDays size={18} /><span><span className="mm-field-label">Check out</span><input aria-label="Check out" name="checkOut" type="date" min={checkIn ? dayAfter(checkIn) : today} value={checkOut} required={Boolean(checkIn)} onInput={(event) => { setCheckOut(event.currentTarget.value); setError("") }} /></span></label>
           <label className="mm-search-field mm-search-travelers"><Users size={19} /><span><span className="mm-field-label">Good company</span><span className="mm-select-wrap"><select aria-label="Travelers" value={travelers} onChange={(event) => setTravelers(event.target.value)}>{["1 Traveler", "2 Travelers", "3 Travelers", "4 Travelers", "5+ Travelers"].map((value) => <option key={value}>{value}</option>)}</select><ChevronDown size={13} /></span></span></label>
           <button type="submit" className="mm-search-submit"><Search size={19} /><span>Find my escape</span><ArrowUpRight size={19} /></button>
         </form>

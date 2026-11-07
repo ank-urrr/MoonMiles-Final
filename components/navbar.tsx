@@ -29,10 +29,10 @@ export function Navbar({ overlay = false }: { overlay?: boolean }) {
         <nav className="mm-desktop-nav" aria-label="Main navigation">{links.map((link) => <Link href={link.href} key={link.href} aria-current={pathname === link.href ? "page" : undefined}>{link.label}</Link>)}</nav>
         <div className="mm-nav-actions">{account}{user && <button type="button" onClick={signOut}>Log out</button>}<Link className="mm-nav-cta" href="/itinerary-planner">Let’s go somewhere <ArrowUpRight size={16} /></Link></div>
         <Dialog.Root open={open} onOpenChange={setOpen}>
-          <Dialog.Trigger asChild><button type="button" className="mm-menu-trigger" aria-label="Open navigation menu"><Menu size={24} /></button></Dialog.Trigger>
+          <Dialog.Trigger asChild><button type="button" className="mm-menu-trigger" aria-label="Open navigation menu" aria-controls="moonmiles-mobile-navigation"><Menu size={24} /></button></Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="mm-menu-backdrop" />
-            <Dialog.Content className="mm-mobile-menu" aria-describedby={undefined}>
+            <Dialog.Content id="moonmiles-mobile-navigation" className="mm-mobile-menu" aria-describedby={undefined}>
               <Dialog.Title className="mm-brand"><Brand /></Dialog.Title>
               <Dialog.Close className="mm-menu-close" aria-label="Close navigation menu"><X size={24} /></Dialog.Close>
               <p className="mm-eyebrow">YOUR NEXT CHAPTER STARTS HERE</p>

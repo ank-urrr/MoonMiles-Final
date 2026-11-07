@@ -1,213 +1,51 @@
 "use client"
 
-import { motion } from "framer-motion"
+import Link from "next/link"
+import { motion, useReducedMotion } from "framer-motion"
+import { ArrowUpRight, Compass, Heart, Leaf } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Chatbot } from "@/components/chatbot"
-import { Users, Globe, Award, Heart } from "lucide-react"
 
-const stats = [
-  { label: "Happy Travelers", value: "50,000+", icon: Users },
-  { label: "Destinations", value: "120+", icon: Globe },
-  { label: "Years Experience", value: "15+", icon: Award },
-  { label: "5-Star Reviews", value: "10,000+", icon: Heart },
-]
-
-const team = [
-  {
-    name: "Ankur Patil",
-    role: "Founder & CEO",
-    image: "/Ankur.jpg",
-  },
-  {
-    name: "Rudraksh Gupta",
-    role: "Head of Operations",
-    image: "/Rudraksh.jpeg",
-  },
-  {
-    name: "Aditya Pandey",
-    role: "Customer Success Lead",
-    image: "/Pandey.png",
-  },
-  {
-    name: "Pushpak Sarode",
-    role: "Travel Experience Director",
-    image: "/Pushpak.png",
-  },
+const values = [
+  { icon: Compass, title: "Stay curious", text: "Leave room for a different perspective, an unexpected turn, and the places between the landmarks." },
+  { icon: Heart, title: "Make it personal", text: "A journey should fit your interests and your pace. The most memorable trip is the one that feels like you." },
+  { icon: Leaf, title: "Travel thoughtfully", text: "Take your time, respect local communities, and treat every destination like a place someone calls home." },
 ]
 
 export default function AboutPage() {
+  const reducedMotion = useReducedMotion()
+  const reveal = reducedMotion ? false : { opacity: 0, y: 28 }
   return (
-    <main id="main-content" className="min-h-screen">
+    <div className="mm-about">
       <Navbar />
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
-              About <span className="text-primary">MoonMiles</span>
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              We're passionate travelers who believe everyone deserves unforgettable journeys. Since 2010, we've been
-              crafting personalized travel experiences that create lasting memories.
-            </p>
+      <main id="main-content">
+        <section className="mm-about-intro mm-section">
+          <motion.div initial={reveal} animate={{ opacity: 1, y: 0 }}>
+            <p className="mm-eyebrow">THE STORY BEHIND THE MILES</p>
+            <h1>A little curiosity.<br /><em>A world of possibility.</em></h1>
+            <p>MoonMiles brings destination inspiration and thoughtful trip planning together, so you can spend less time figuring it all out and more time looking forward to it.</p>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 px-4 bg-secondary/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="glass rounded-2xl p-6 text-center"
-              >
-                <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <stat.icon className="w-6 h-6 text-primary" />
-                </div>
-                <p className="text-3xl font-bold text-foreground mb-1">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Our Story Section */}
-      <section className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Our Story</h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  MoonMiles was born from a simple belief: travel should be transformative, not stressful. Our founder,
-                  Ankur Patil, started this journey after experiencing the frustration of poorly planned trips that
-                  missed the essence of each destination.
-                </p>
-                <p>
-                  Today, we're a team of passionate travel experts who handpick every experience, from hidden local gems
-                  to world-renowned attractions. We partner with trusted accommodations, guides, and transport providers
-                  to ensure seamless journeys.
-                </p>
-                <p>
-                  Our mission is to help you explore the world with confidence, creating memories that last a lifetime
-                  while respecting local cultures and environments.
-                </p>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <img
-                src="/travel-team-planning-trip-with-world-map-warm-offi.jpg"
-                alt="MoonMiles team"
-                className="rounded-2xl w-full object-cover aspect-[4/3]"
-              />
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary/20 to-transparent" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-24 px-4 bg-secondary/20">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Meet Our Team</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              The passionate travelers behind your perfect journeys.
-            </p>
+        </section>
+        <section className="mm-founder mm-section" aria-labelledby="founder-title">
+          <motion.div className="mm-founder-photo" initial={reveal} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }}><img src="/Ankur.jpg" alt="Ankur Patil, founder of MoonMiles" width={600} height={750} fetchPriority="high" /><span>THE PERSON BEHIND MOONMILES</span></motion.div>
+          <motion.div className="mm-founder-copy" initial={reveal} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: 0.12 }}>
+            <p className="mm-eyebrow">MEET THE FOUNDER</p>
+            <h2 id="founder-title">Ankur <em>Patil.</em></h2>
+            <span className="mm-founder-role">Founder & CEO · MoonMiles</span>
+            <p>Behind MoonMiles is a simple idea: discovering your next destination should be as inspiring as the journey itself.</p>
+            <p>Created by Ankur Patil, MoonMiles brings together immersive destination guides, travel ideas, and an AI trip planner in one place. It is a space to turn a little curiosity into a plan that’s yours.</p>
+            <p>From a quiet island escape to a city you’ve always wanted to explore, the starting point is the same: what would you love to experience?</p>
+            <Link className="mm-text-link" href="/contact">Let’s talk about your next chapter <ArrowUpRight size={18} /></Link>
           </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {team.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="glass rounded-2xl overflow-hidden group"
-              >
-                <div className="aspect-square overflow-hidden">
-                  <img
-                    src={member.image || "/placeholder.svg"}
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-4 text-center">
-                  <h3 className="font-semibold text-foreground">{member.name}</h3>
-                  <p className="text-sm text-muted-foreground">{member.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="py-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Our Values</h2>
-            <div className="grid md:grid-cols-3 gap-8 mt-12">
-              <div className="space-y-3">
-                <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Heart className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Passion</h3>
-                <p className="text-muted-foreground">We love what we do and it shows in every itinerary we craft.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Globe className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Sustainability</h3>
-                <p className="text-muted-foreground">We promote responsible travel that respects local communities.</p>
-              </div>
-              <div className="space-y-3">
-                <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <Award className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">Excellence</h3>
-                <p className="text-muted-foreground">We never settle for less than extraordinary experiences.</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
+        </section>
+        <section className="mm-section mm-about-values" aria-labelledby="values-title">
+          <div className="mm-section-heading"><div><p className="mm-eyebrow">WHAT GUIDES THE JOURNEY</p><h2 id="values-title">Good journeys.<br /><em>Thoughtful beginnings.</em></h2></div></div>
+          <div className="mm-steps">{values.map(({ icon: Icon, title, text }, index) => <motion.div className="mm-step" key={title} initial={reveal} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.08 }}><div className="mm-step-top"><span>0{index + 1}</span><Icon size={25} strokeWidth={1.4} /></div><h3>{title}</h3><p>{text}</p></motion.div>)}</div>
+        </section>
+      </main>
       <Footer />
       <Chatbot />
-    </main>
+    </div>
   )
 }

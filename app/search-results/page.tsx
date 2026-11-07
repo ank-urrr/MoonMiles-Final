@@ -11,21 +11,23 @@ import { FloatingDots } from "@/components/animated-background"
 function SearchResultsContent() {
   const searchParams = useSearchParams()
   const destination = searchParams.get("destination") || "Paris, France"
-  const checkIn = searchParams.get("checkIn") || "2025-12-24"
-  const checkOut = searchParams.get("checkOut") || "2025-12-27"
+  const checkIn = searchParams.get("checkIn") || ""
+  const checkOut = searchParams.get("checkOut") || ""
   const travelers = searchParams.get("travelers") || "1 Traveler"
   const currencyParam = searchParams.get("currency") || "USD"
 
-  const [selectedCurrency, setSelectedCurrency] = useState<"USD" | "LOCAL" | "INR">(
-    currencyParam === "INR" ? "INR" : currencyParam === "EUR" ? "LOCAL" : "USD",
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    ["USD", "EUR", "INR", "GBP", "AED"].includes(currencyParam) ? currencyParam : "USD",
   )
   const [isLoadingInsights, setIsLoadingInsights] = useState(false)
   const [insights, setInsights] = useState<string | null>(null)
 
   const currencies = [
     { key: "USD" as const, label: "USD" },
-    { key: "LOCAL" as const, label: "Local (EUR)" },
+    { key: "EUR" as const, label: "EUR" },
     { key: "INR" as const, label: "INR" },
+    { key: "GBP" as const, label: "GBP" },
+    { key: "AED" as const, label: "AED" },
   ]
 
   const formatDate = (dateStr: string) => {
@@ -47,19 +49,14 @@ function SearchResultsContent() {
     let priceUsd = basePerPerson + (nights - 1) * 30
     priceUsd *= travelerCount
 
-    let symbol = "$"
-    let value = priceUsd
-
-    if (selectedCurrency === "LOCAL") {
-      // Treat LOCAL as EUR
-      symbol = "€"
-      value = Math.round(priceUsd * 0.9)
-    } else if (selectedCurrency === "INR") {
-      symbol = "₹"
-      value = Math.round(priceUsd * 83)
+    // Illustrative conversions for sample prices, not live exchange rates.
+    const samples: Record<string, { symbol: string; multiplier: number }> = {
+      USD: { symbol: "$", multiplier: 1 }, EUR: { symbol: "€", multiplier: 0.9 },
+      INR: { symbol: "₹", multiplier: 83 }, GBP: { symbol: "£", multiplier: 0.78 },
+      AED: { symbol: "AED ", multiplier: 3.67 },
     }
-
-    return { symbol, value }
+    const { symbol, multiplier } = samples[selectedCurrency] || samples.USD
+    return { symbol, value: Math.round(priceUsd * multiplier) }
   }
 
   const getFlightOptions = () => {
@@ -100,10 +97,11 @@ function SearchResultsContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           destination,
-          currency: selectedCurrency === "LOCAL" ? "EUR" : selectedCurrency,
+          currency: selectedCurrency,
         }),
       })
       const data = await response.json()
+      if (!response.ok || !data.insights) throw new Error("Insights unavailable")
       setInsights(data.insights)
     } catch (error) {
       setInsights("Unable to fetch insights at this time. Please try again later.")
@@ -154,7 +152,7 @@ function SearchResultsContent() {
                 <div className="flex items-center gap-2 text-foreground">
                   <Calendar className="w-4 h-4 text-primary" />
                   <span>
-                    {formatDate(checkIn)} – {formatDate(checkOut)}
+                    {checkIn && checkOut ? `${formatDate(checkIn)} – ${formatDate(checkOut)}` : "Flexible dates"}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">PRICES IN</p>
@@ -194,7 +192,7 @@ function SearchResultsContent() {
                   </p>
                 </div>
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  Showing prices in {selectedCurrency === "LOCAL" ? "LOCAL (EUR)" : selectedCurrency}
+                  Showing prices in {selectedCurrency}
                 </span>
               </div>
 
@@ -267,7 +265,7 @@ function SearchResultsContent() {
               </div>
 
               <p className="text-[11px] text-muted-foreground mt-3 pt-3 border-t border-border/40">
-                Prices are estimated samples based on your dates and travelers. Final fares may differ on booking platforms.
+                Prices and currency conversions are illustrative estimates, not live quotes. Confirm final fares on booking platforms.
               </p>
             </motion.div>
 
@@ -287,12 +285,12 @@ function SearchResultsContent() {
                     </h2>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    PRICES / TIPS IN {selectedCurrency === "LOCAL" ? "LOCAL (EUR)" : selectedCurrency}
+                    PRICES / TIPS IN {selectedCurrency}
                   </span>
                 </div>
 
                 <p className="text-sm text-muted-foreground mb-6">
-                  Get an AI snapshot of today's weather, what's happening, and how to make the most of your trip.
+                  Explore typical weather, local highlights, and ideas for your trip. AI suggestions are not live travel updates.
                 </p>
 
                 {!insights ? (
@@ -327,8 +325,7 @@ function SearchResultsContent() {
                 </button>
 
                 <p className="text-xs text-muted-foreground mt-4 text-center">
-                  Powered by AI via{" "}
-                  <code className="bg-white/40 px-1.5 py-0.5 rounded text-primary">/api/insights</code>
+                  A little inspiration from your AI travel companion.
                 </p>
               </div>
             </motion.div>

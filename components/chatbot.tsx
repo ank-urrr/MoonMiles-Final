@@ -126,7 +126,7 @@ export function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[min(350px,calc(100vw-32px))] h-[min(500px,calc(100dvh-130px))] glass-strong rounded-3xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[min(350px,calc(100vw-32px))] h-[min(500px,calc(100dvh-130px))] bg-card border border-border shadow-2xl rounded-3xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="p-4 border-b border-border flex items-center gap-3">

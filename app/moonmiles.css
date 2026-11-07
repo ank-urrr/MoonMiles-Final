@@ -17,7 +17,7 @@
   --mm-paper: #f7f6f0;
   --mm-olive: #34452e;
 }
-html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+html { position: relative; scroll-behavior: smooth; scroll-padding-top: 100px; }
 body { font-family: var(--font-inter), Arial, sans-serif; }
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 button:not(:disabled), select { cursor: pointer; }
@@ -184,6 +184,36 @@ button:not(:disabled), select { cursor: pointer; }
 @keyframes mm-menu-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes mm-scenic-drift { from { transform: scale(1.055); } to { transform: scale(1); } }
 @keyframes mm-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.mm-journey-scroll { position: relative; height: 230svh; padding: 1px 0; }
+.mm-journey-scroll .mm-journey { position: sticky; top: 16px; height: calc(100svh - 32px); min-height: 520px; display: flex; align-items: center; }
+.mm-journey-scroll .mm-journey-copy { padding-top: 70px; padding-bottom: 100px; }
+.mm-journey-scroll .mm-journey-image img { height: 100%; top: 0; }
+.mm-journey-chapters { position: absolute; bottom: 40px; left: 6%; font-size: 8px; letter-spacing: 1.7px; }
+.mm-journey-chapters > span { position: absolute; left: 0; bottom: 0; white-space: nowrap; }
+.mm-journey-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: #ffffff18; }
+.mm-journey-progress > span { display: block; height: 100%; transform-origin: left; background: #e4dca3; }
+.mm-journey-scroll.mm-motion-reduced { height: auto; }
+.mm-motion-reduced .mm-journey { position: relative; height: 610px; }
+.mm-about-intro { padding-top: 160px; padding-bottom: 50px; }
+.mm-about-intro .mm-eyebrow, .mm-founder-copy .mm-eyebrow { color: #748066; margin-bottom: 22px; }
+.mm-about-intro h1 { font-size: clamp(45px, 5.5vw, 78px); font-weight: 400; line-height: 1.1; letter-spacing: -3px; }
+.mm-about-intro h1 em, .mm-founder-copy h2 em { font-family: Georgia, serif; font-weight: 400; }
+.mm-about-intro h1 + p { max-width: 580px; font-size: 14px; color: #72796a; line-height: 1.9; margin-top: 30px; }
+.mm-founder { display: grid; grid-template-columns: 1fr 1.1fr; gap: 9%; align-items: center; padding-top: 35px; padding-bottom: 60px; }
+.mm-founder-photo { position: relative; overflow: hidden; border-radius: 13px; aspect-ratio: 4/4.6; background: #e7e9de; }
+.mm-founder-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.mm-founder-photo > span { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, #14230bbc); padding: 50px 25px 25px; font-size: 8px; letter-spacing: 2px; color: #fff; }
+.mm-founder-copy h2 { font-size: clamp(36px, 4vw, 58px); letter-spacing: -2px; line-height: 1.1; }
+.mm-founder-role { display: block; font-size: 11px; color: #7d866f; margin: 15px 0 30px; }
+.mm-founder-copy > p:not(.mm-eyebrow) { font-size: 13px; color: #6e7566; line-height: 1.9; margin-bottom: 18px; }
+.mm-founder-copy .mm-text-link { margin-top: 18px; white-space: normal; }
+.mm-about-values { padding-top: 45px; }
+@media (max-height: 600px), (max-width: 600px) {
+  .mm-journey-scroll { height: auto; }
+  .mm-journey-scroll .mm-journey { position: relative; top: auto; height: auto; min-height: 530px; }
+  .mm-journey-scroll .mm-journey-copy { transform: none !important; }
+  .mm-journey-image .mm-journey-scene, .mm-journey-chapters, .mm-journey-progress { display: none; }
+}
 @media (min-width: 1600px) { .mm-hero-copy { left: max(6%, calc((100% - 1280px) / 2)); } }
 @media (max-width: 1150px) {
   .mm-desktop-nav { gap: 20px; }
@@ -237,7 +267,7 @@ button:not(:disabled), select { cursor: pointer; }
   .mm-hero-visual { margin: 0 8px; height: 680px; min-height: 0; border-radius: 13px; }
   .mm-hero-copy { top: 150px; left: 7%; right: 7%; }
   .mm-hero-copy > .mm-eyebrow { font-size: 7px; letter-spacing: 1.4px; }
-  .mm-hero h1 { font-size: clamp(58px, 13vw, 78px); margin-top: 24px; line-height: 1.05; }
+  .mm-hero h1 { font-size: clamp(48px, 15vw, 78px); margin-top: 24px; line-height: 1.05; }
   .mm-hero-intro { margin-top: 25px; }
   .mm-hero-intro p { font-size: 11px; line-height: 1.85; }
   .mm-hero-explore { font-size: 10px; margin-top: 20px; }
@@ -255,6 +285,7 @@ button:not(:disabled), select { cursor: pointer; }
   .mm-search-wrap { width: calc(100% - 44px); margin-top: -30px; }
   .mm-search { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 19px 12px 12px; row-gap: 18px; border-radius: 12px; }
   .mm-search-field { border-right: 0; padding: 0 9px; gap: 8px; }
+  .mm-search-field:has(input[type="date"]) > svg { display: none; }
   .mm-search-destination { grid-column: span 2; border-bottom: 1px solid #e5e7dd; padding-bottom: 15px; }
   .mm-search-travelers { grid-column: span 1; }
   .mm-search-submit { grid-column: span 1; padding: 0 12px; gap: 8px; height: 49px; margin-left: 4px; }
@@ -306,10 +337,23 @@ button:not(:disabled), select { cursor: pointer; }
   .mm-footer-bottom { flex-wrap: wrap; gap: 20px; }
   .mm-footer-bottom > span { display: none; }
   .mm-footer-bottom small { font-size: 8px; }
+  .mm-about-intro { padding-top: 130px; padding-bottom: 20px; }
+  .mm-about-intro h1 { font-size: 43px; letter-spacing: -2px; }
+  .mm-about-intro h1 + p { font-size: 12px; margin-top: 25px; }
+  .mm-founder { grid-template-columns: 1fr; gap: 35px; padding-top: 25px; }
+  .mm-founder-photo { max-width: 400px; width: 100%; }
+  .mm-founder-copy h2 { font-size: 43px; }
+  .mm-founder-copy > p:not(.mm-eyebrow) { font-size: 12px; }
+}
+@media (max-width: 360px) {
+  .mm-scene-progress .mm-progress-track { display: none; }
+  .mm-scene-location span { max-width: 145px; line-height: 1.4; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .mm-hero-photo, .mm-hero-enter, .mm-mobile-menu { animation: none !important; }
   .mm-hero-enter { opacity: 1; transform: none; }
+  .mm-journey-scroll { height: auto; }
+  .mm-journey-scroll .mm-journey { position: relative; top: auto; }
 }
